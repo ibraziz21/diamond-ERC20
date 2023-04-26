@@ -90,7 +90,7 @@ interface IERC20 {
 
 // File @openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol@v4.8.2
 
-// SPDX-License-Identifier: MIT
+
 // OpenZeppelin Contracts v4.4.1 (token/ERC20/extensions/IERC20Metadata.sol)
 
 pragma solidity ^0.8.0;
@@ -120,7 +120,6 @@ interface IERC20Metadata is IERC20 {
 
 // File @openzeppelin/contracts/utils/Context.sol@v4.8.2
 
-// SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts v4.4.1 (utils/Context.sol)
 
 pragma solidity ^0.8.0;
@@ -148,7 +147,7 @@ abstract contract Context {
 
 // File @openzeppelin/contracts/token/ERC20/ERC20.sol@v4.8.2
 
-// SPDX-License-Identifier: MIT
+
 // OpenZeppelin Contracts (last updated v4.8.0) (token/ERC20/ERC20.sol)
 
 pragma solidity ^0.8.0;
