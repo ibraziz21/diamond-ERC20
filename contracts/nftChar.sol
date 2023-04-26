@@ -4,7 +4,7 @@
 
 // SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts v4.4.1 (utils/introspection/IERC165.sol)
-
+import "./libraries/LibDiamond.sol";
 pragma solidity ^0.8.0;
 
 /**
@@ -31,7 +31,7 @@ interface IERC165 {
 
 // File @openzeppelin/contracts/token/ERC721/IERC721.sol@v4.8.2
 
-// SPDX-License-Identifier: MIT
+// 
 // OpenZeppelin Contracts (last updated v4.8.0) (token/ERC721/IERC721.sol)
 
 pragma solidity ^0.8.0;
@@ -39,7 +39,7 @@ pragma solidity ^0.8.0;
 /**
  * @dev Required interface of an ERC721 compliant contract.
  */
-interface IERC721 is IERC165 {
+interface IERC721  {
     /**
      * @dev Emitted when `tokenId` token is transferred from `from` to `to`.
      */
@@ -178,7 +178,7 @@ interface IERC721 is IERC165 {
 
 // File @openzeppelin/contracts/token/ERC721/IERC721Receiver.sol@v4.8.2
 
-// SPDX-License-Identifier: MIT
+//  
 // OpenZeppelin Contracts (last updated v4.6.0) (token/ERC721/IERC721Receiver.sol)
 
 pragma solidity ^0.8.0;
@@ -209,7 +209,7 @@ interface IERC721Receiver {
 
 // File @openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol@v4.8.2
 
-// SPDX-License-Identifier: MIT
+//  
 // OpenZeppelin Contracts v4.4.1 (token/ERC721/extensions/IERC721Metadata.sol)
 
 pragma solidity ^0.8.0;
@@ -238,7 +238,7 @@ interface IERC721Metadata is IERC721 {
 
 // File @openzeppelin/contracts/utils/Address.sol@v4.8.2
 
-// SPDX-License-Identifier: MIT
+//  
 // OpenZeppelin Contracts (last updated v4.8.0) (utils/Address.sol)
 
 pragma solidity ^0.8.1;
@@ -486,7 +486,7 @@ library Address {
 
 // File @openzeppelin/contracts/utils/Context.sol@v4.8.2
 
-// SPDX-License-Identifier: MIT
+//  
 // OpenZeppelin Contracts v4.4.1 (utils/Context.sol)
 
 pragma solidity ^0.8.0;
@@ -514,7 +514,7 @@ abstract contract Context {
 
 // File @openzeppelin/contracts/utils/math/Math.sol@v4.8.2
 
-// SPDX-License-Identifier: MIT
+//  
 // OpenZeppelin Contracts (last updated v4.8.0) (utils/math/Math.sol)
 
 pragma solidity ^0.8.0;
@@ -863,7 +863,7 @@ library Math {
 
 // File @openzeppelin/contracts/utils/Strings.sol@v4.8.2
 
-// SPDX-License-Identifier: MIT
+//  
 // OpenZeppelin Contracts (last updated v4.8.0) (utils/Strings.sol)
 
 pragma solidity ^0.8.0;
@@ -935,7 +935,7 @@ library Strings {
 
 // File @openzeppelin/contracts/utils/introspection/ERC165.sol@v4.8.2
 
-// SPDX-License-Identifier: MIT
+//  
 // OpenZeppelin Contracts v4.4.1 (utils/introspection/ERC165.sol)
 
 pragma solidity ^0.8.0;
@@ -966,7 +966,7 @@ abstract contract ERC165 is IERC165 {
 
 // File @openzeppelin/contracts/token/ERC721/ERC721.sol@v4.8.2
 
-// SPDX-License-Identifier: MIT
+//  
 // OpenZeppelin Contracts (last updated v4.8.2) (token/ERC721/ERC721.sol)
 
 pragma solidity ^0.8.0;
@@ -982,7 +982,7 @@ pragma solidity ^0.8.0;
  * the Metadata extension, but not including the Enumerable extension, which is available separately as
  * {ERC721Enumerable}.
  */
-contract ERC721Faucet is Context, ERC165, IERC721, IERC721Metadata {
+contract ERC721Faucet is Context, IERC721, IERC721Metadata {
     using Address for address;
     using Strings for uint256;
 
@@ -997,28 +997,29 @@ contract ERC721Faucet is Context, ERC165, IERC721, IERC721Metadata {
         ds._symbol = symbol_;
     }
 
-    function mintCharacter(){
+    function mintCharacter() external{
         LibDiamond.DiamondStorage storage ds = LibDiamond.diamondStorage();
-        LibDiamond.AttributeStorage storage as = LibDiamond.attributeStorage();
         uint id = ++ds.counter;
+        LibDiamond.AttributeStorage  storage atts = ds.attributes[id]; 
+
+
+         _mint(_msgSender(),id);
+        atts.level = 1;
+        atts.xp = 1;
         
-        (bool success) = _mint(_msgSender(),id);
-        if(success){
-        as.attributes[id].level = 1;
-        as.attributes[id].xp = 1;
-        }
 
     }
 
     /**
      * @dev See {IERC165-supportsInterface}.
      */
-    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC165, IERC165) returns (bool) {
-        return
-            interfaceId == type(IERC721).interfaceId ||
-            interfaceId == type(IERC721Metadata).interfaceId ||
-            super.supportsInterface(interfaceId);
-    }
+    // function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {
+    //     LibDiamond.DiamondStorage storage ds = LibDiamond.diamondStorage();
+    //     return
+    //         interfaceId == type(IERC721).interfaceId ||
+    //         interfaceId == type(IERC721Metadata).interfaceId ||
+    //         ds.supportedInterfaces[interfaceId];
+    // }
 
     /**
      * @dev See {IERC721-balanceOf}.
@@ -1077,7 +1078,7 @@ contract ERC721Faucet is Context, ERC165, IERC721, IERC721Metadata {
      * @dev See {IERC721-approve}.
      */
     function approve(address to, uint256 tokenId) public virtual override {
-        address owner = ERC721.ownerOf(tokenId);
+        address owner = ownerOf(tokenId);
         require(to != owner, "ERC721: approval to current owner");
 
         require(
@@ -1206,7 +1207,7 @@ contract ERC721Faucet is Context, ERC165, IERC721, IERC721Metadata {
      * - `tokenId` must exist.
      */
     function _isApprovedOrOwner(address spender, uint256 tokenId) internal view virtual returns (bool) {
-        address owner = ERC721.ownerOf(tokenId);
+        address owner = ownerOf(tokenId);
         return (spender == owner || isApprovedForAll(owner, spender) || getApproved(tokenId) == spender);
     }
 
@@ -1288,12 +1289,12 @@ contract ERC721Faucet is Context, ERC165, IERC721, IERC721Metadata {
      * Emits a {Transfer} event.
      */
     function _burn(uint256 tokenId) internal virtual {
-        address owner = ERC721.ownerOf(tokenId);
+        address owner = ownerOf(tokenId);
         LibDiamond.DiamondStorage storage ds = LibDiamond.diamondStorage();
         _beforeTokenTransfer(owner, address(0), tokenId, 1);
 
         // Update ownership in case tokenId was transferred by `_beforeTokenTransfer` hook
-        owner = ERC721.ownerOf(tokenId);
+        owner = ownerOf(tokenId);
 
         // Clear approvals
         delete ds._tokenApprovals[tokenId];
@@ -1326,14 +1327,14 @@ contract ERC721Faucet is Context, ERC165, IERC721, IERC721Metadata {
         address to,
         uint256 tokenId
     ) internal virtual {
-        require(ERC721.ownerOf(tokenId) == from, "ERC721: transfer from incorrect owner");
+        require(ownerOf(tokenId) == from, "ERC721: transfer from incorrect owner");
         require(to != address(0), "ERC721: transfer to the zero address");
 
         LibDiamond.DiamondStorage storage ds = LibDiamond.diamondStorage();
         _beforeTokenTransfer(from, to, tokenId, 1);
 
         // Check that tokenId was not transferred by `_beforeTokenTransfer` hook
-        require(ERC721.ownerOf(tokenId) == from, "ERC721: transfer from incorrect owner");
+        require(ownerOf(tokenId) == from, "ERC721: transfer from incorrect owner");
 
         // Clear approvals from the previous owner
         delete ds._tokenApprovals[tokenId];
@@ -1354,6 +1355,9 @@ contract ERC721Faucet is Context, ERC165, IERC721, IERC721Metadata {
         _afterTokenTransfer(from, to, tokenId, 1);
     }
 
+/* Just writing something on the pc to create 
+    */
+
     /**
      * @dev Approve `to` to operate on `tokenId`
      *
@@ -1362,7 +1366,7 @@ contract ERC721Faucet is Context, ERC165, IERC721, IERC721Metadata {
     function _approve(address to, uint256 tokenId) internal virtual {
         LibDiamond.DiamondStorage storage ds = LibDiamond.diamondStorage();
         ds._tokenApprovals[tokenId] = to;
-        emit Approval(ERC721.ownerOf(tokenId), to, tokenId);
+        emit Approval(ownerOf(tokenId), to, tokenId);
     }
 
     /**

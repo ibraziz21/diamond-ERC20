@@ -14,7 +14,6 @@ error InitializationFunctionReverted(address _initializationContractAddress, byt
 
 library LibDiamond {
     bytes32 constant DIAMOND_STORAGE_POSITION = keccak256("diamond.standard.diamond.storage");
-
     struct AttributeStorage {
         uint level;
         uint xp;
@@ -68,12 +67,7 @@ library LibDiamond {
             ds.slot := position
         }
     }
-    function attributeStorage() internal pure returns (AttributeStorage storage as) {
-        bytes32 position = DIAMOND_STORAGE_POSITION;
-        assembly {
-            as.slot := position
-        }
-    }
+   
 
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
 
